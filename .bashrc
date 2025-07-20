@@ -13,3 +13,4 @@ PS1='[\u@\h \W]\$ '
 eval "$(starship init bash)"
 eval "$(zoxide init --cmd cd bash)"
 eval "$(fzf --bash)"
+# some useless info
