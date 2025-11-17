@@ -115,23 +115,23 @@ DOTFILES_DIR="$HOME/.dotfiles"
 echo "Deploying dotfiles from $DOTFILES_DIR ..."
 
 # .bashrc (repo to local)
-cp -v "$DOTFILES_DIR/bash/.bashrc" "$HOME/"
+cp -v "$DOTFILES_DIR/bash/.bashrc" "$HOME/.bashrc"
 
 # btop (repo to local)
 mkdir -p "$HOME/.config/btop"
-cp -rv "$DOTFILES_DIR/btop/btop.conf" "$HOME/.config/"
+cp -v "$DOTFILES_DIR/btop/btop.conf" "$HOME/.config/btop/btop.conf"
 
 # fastfetch (repo to local)
 mkdir -p "$HOME/.config/fastfetch"
-cp -rv "$DOTFILES_DIR/fastfetch/" "$HOME/.config/"
+cp -rv "$DOTFILES_DIR/fastfetch/" "$HOME/.config/fastfetch/"
 
 # neovim (repo to local)
 mkdir -p "$HOME/.config/nvim"
-cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/"
+cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/nvim/"
 
 # starship (repo to local)
 mkdir -p "$HOME/.config"
-cp -v "$DOTFILES_DIR/starship/starship.toml" "$HOME/.config/"
+cp -v "$DOTFILES_DIR/starship/starship.toml" "$HOME/.config/starship.toml"
 
 # Add more files here as needed:
 # if directories are present, use cp -rv to copy recursively
@@ -157,23 +157,23 @@ echo "Updating repo at $DOTFILES_DIR ..."
 
 # .bashrc (local to repo)
 mkdir -p "$DOTFILES_DIR/bash"
-cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/"
+cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/.bashrc"
 
 # btop (local to repo)
 mkdir -p "$DOTFILES_DIR/btop"
-cp -rv "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/"
+cp -v "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/btop.conf"
 
 # fastfetch (local to repo)
 mkdir -p "$DOTFILES_DIR/fastfetch"
-cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/"
+cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/fastfetch/"
 
 # neovim (local to repo)
 mkdir -p "$DOTFILES_DIR/nvim"
-cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
+cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/nvim/"
 
 # starship (local to repo)
 mkdir -p "$DOTFILES_DIR/starship"
-cp -v "$HOME/.config/starship.toml" "$DOTFILES_DIR/starship/"
+cp -v "$HOME/.config/starship.toml" "$DOTFILES_DIR/starship/starship.toml"
 
 # Add more files here as needed:
 # if directories are present, use cp -rv to copy recursively

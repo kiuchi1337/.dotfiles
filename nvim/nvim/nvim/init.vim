@@ -1,0 +1,9 @@
+set shortmess+=I
+set spelllang=en,de
+set spell
+set cursorline
+set number
+set relativenumber
+set list
+set listchars=tab:>-,trail:~,space:·,eol:$
+colorscheme zaibatsu

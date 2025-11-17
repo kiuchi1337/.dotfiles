@@ -5,29 +5,29 @@
 set -e  # exit on error
 
 DOTFILES_DIR="$HOME/.dotfiles"
-REMOTE_URL="git@github.com:kiuchi1337/.dotfiles.git"  # <- Adjust!
+REMOTE_URL="git@github.com:USERNAME/.dotfiles.git"  # <- Adjust!
 
 echo "Updating repo at $DOTFILES_DIR ..."
 
 # .bashrc (local to repo)
 mkdir -p "$DOTFILES_DIR/bash"
-cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/"
+cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/.bashrc"
 
 # btop (local to repo)
 mkdir -p "$DOTFILES_DIR/btop"
-cp -rv "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/"
+cp -v "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/btop.conf"
 
 # fastfetch (local to repo)
 mkdir -p "$DOTFILES_DIR/fastfetch"
-cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/"
+cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/fastfetch/"
 
 # neovim (local to repo)
 mkdir -p "$DOTFILES_DIR/nvim"
-cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
+cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/nvim/"
 
 # starship (local to repo)
 mkdir -p "$DOTFILES_DIR/starship"
-cp -v "$HOME/.config/starship.toml" "$DOTFILES_DIR/starship/"
+cp -v "$HOME/.config/starship.toml" "$DOTFILES_DIR/starship/starship.toml"
 
 # Add more files here as needed:
 # if directories are present, use cp -rv to copy recursively
