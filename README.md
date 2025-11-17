@@ -8,7 +8,7 @@
 - WSL Error:
     - Open nvim
     - :set ff?
-        - ff=unix → OK (LF).
+        - ff=unix → OK (LF)
         - ff=dos → Not OK (CRLF)
     - :set ff=unix
     - :wq
