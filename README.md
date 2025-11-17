@@ -5,6 +5,10 @@
 - deploy_dotfiles.sh -> Copies dotfiles from ~/.dotfiles into their respective directories
 - update_repo.sh -> Copies current dotfiles back into the repo and pushes to GitHub
 
+- To copy individual files, use cp -v SOURCE_FILE TARGET_FILE
+- To copy whole directories, use cp -rv SOURCE_DIR/ TARGET_DIR/
+- To copy only the conentents of a directory, use cp -rv SOURCE_DIR/* TARGET_DIR/ or cp -rv SOURCE_DIR/. TARGET_DIR/
+
 - WSL Error:
     - Open nvim
     - :set ff?
@@ -123,18 +127,16 @@ cp -v "$DOTFILES_DIR/btop/btop.conf" "$HOME/.config/btop/btop.conf"
 
 # fastfetch (repo to local)
 mkdir -p "$HOME/.config/fastfetch"
-cp -rv "$DOTFILES_DIR/fastfetch/" "$HOME/.config/fastfetch/"
+cp -v "$DOTFILES_DIR/fastfetch/config.jsonc" "$HOME/.config/fastfetch/config.jsonc"
+cp -v "$DOTFILES_DIR/fastfetch/yorha.txt" "$HOME/.config/fastfetch/yorha.txt"
 
 # neovim (repo to local)
 mkdir -p "$HOME/.config/nvim"
-cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/nvim/"
+cp -v "$DOTFILES_DIR/nvim/init.vim" "$HOME/.config/nvim/init.vim"
 
 # starship (repo to local)
 mkdir -p "$HOME/.config"
 cp -v "$DOTFILES_DIR/starship/starship.toml" "$HOME/.config/starship.toml"
-
-# Add more files here as needed:
-# if directories are present, use cp -rv to copy recursively
 
 echo "Deployment finished!"
 ~~~
@@ -165,18 +167,16 @@ cp -v "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/btop.conf"
 
 # fastfetch (local to repo)
 mkdir -p "$DOTFILES_DIR/fastfetch"
-cp -rv "$HOME/.config/fastfetch/"* "$DOTFILES_DIR/fastfetch/"
+cp -v "$HOME/.config/fastfetch/config.jsonc" "$DOTFILES_DIR/fastfetch/config.jsonc"
+cp -v "$HOME/.config/fastfetch/yorha.txt" "$DOTFILES_DIR/fastfetch/yorha.txt"
 
 # neovim (local to repo)
 mkdir -p "$DOTFILES_DIR/nvim"
-cp -rv "$HOME/.config/nvim/"* "$DOTFILES_DIR/nvim/"
+cp -v "$HOME/.config/nvim/init.vim" "$DOTFILES_DIR/nvim/init.vim"
 
 # starship (local to repo)
 mkdir -p "$DOTFILES_DIR/starship"
 cp -v "$HOME/.config/starship.toml" "$DOTFILES_DIR/starship/starship.toml"
-
-# Add more files here as needed:
-# if directories are present, use cp -rv to copy recursively
 
 cd "$DOTFILES_DIR"
 
