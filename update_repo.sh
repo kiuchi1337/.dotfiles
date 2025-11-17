@@ -15,15 +15,15 @@ cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/"
 
 # neovim (local to repo)
 mkdir -p "$DOTFILES_DIR/nvim"
-cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/nvim/"
+cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
 
 # btop (local to repo)
 mkdir -p "$DOTFILES_DIR/btop"
-cp -rv "$HOME/.config/btop/" "$DOTFILES_DIR/btop/"
+cp -rv "$HOME/.config/btop/" "$DOTFILES_DIR/"
 
 # fastfetch (local to repo)
 mkdir -p "$DOTFILES_DIR/fastfetch"
-cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/fastfetch/"
+cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/"
 
 # starship (local to repo)
 mkdir -p "$DOTFILES_DIR/starship"

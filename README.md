@@ -4,6 +4,14 @@
 - deploy_dotfiles.sh -> Copies dotfiles from ~/.dotfiles into the home directory
 - update_repo.sh -> Copies current dotfiles back into the repo and pushes to GitHub
 
+- WSL Error:
+    - Open nvim
+    - :set ff?
+        - ff=unix → OK (LF).
+        - ff=dos → Not OK (CRLF)
+    - :set ff=unix
+    - :wq
+
 ---
 
 1. Install Git & OpenSSH
@@ -147,18 +155,23 @@ REMOTE_URL="git@github.com:USERNAME/.dotfiles.git"  # <- Adjust!
 echo "Updating repo at $DOTFILES_DIR ..."
 
 # .bashrc (local to repo)
+mkdir -p "$DOTFILES_DIR/bash"
 cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/"
 
 # neovim (local to repo)
-cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/nvim/"
+mkdir -p "$DOTFILES_DIR/nvim"
+cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
 
 # btop (local to repo)
-cp -rv "$HOME/.config/btop/" "$DOTFILES_DIR/btop/"
+mkdir -p "$DOTFILES_DIR/btop"
+cp -rv "$HOME/.config/btop/" "$DOTFILES_DIR/"
 
 # fastfetch (local to repo)
-cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/fastfetch/"
+mkdir -p "$DOTFILES_DIR/fastfetch"
+cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/"
 
 # starship (local to repo)
+mkdir -p "$DOTFILES_DIR/starship"
 cp -v "$HOME/.config/starship.toml" "$DOTFILES_DIR/starship/"
 
 # Add more files here as needed:
