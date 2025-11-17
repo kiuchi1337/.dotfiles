@@ -87,7 +87,7 @@ chmod +x deploy_dotfiles.sh
 chmod +x update_repo.sh
 ~~~
 
-5. Deploy dotfiles/Update repo
+5. Deploy dotfiles // Update repo
 
 ~~~bash
 ./deploy_dotfiles.sh
