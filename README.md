@@ -1,7 +1,8 @@
 # Dotfiles Repo
 
 - This repository contains my personal dotfiles and scripts for deployment/updates.
-- deploy_dotfiles.sh -> Copies dotfiles from ~/.dotfiles into the home directory
+
+- deploy_dotfiles.sh -> Copies dotfiles from ~/.dotfiles into their respective directories
 - update_repo.sh -> Copies current dotfiles back into the repo and pushes to GitHub
 
 - WSL Error:
