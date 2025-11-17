@@ -114,19 +114,19 @@ DOTFILES_DIR="$HOME/.dotfiles"
 echo "Deploying dotfiles from $DOTFILES_DIR ..."
 
 # .bashrc (repo to local)
-cp -v "$DOTFILES_DIR/bash/" "$HOME/.bashrc"
+cp -v "$DOTFILES_DIR/bash/.bash.rc" "$HOME/"
 
 # neovim (repo to local)
 mkdir -p "$HOME/.config/nvim"
-cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/nvim/"
+cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/"
 
 # btop (repo to local)
 mkdir -p "$HOME/.config/btop"
-cp -rv "$DOTFILES_DIR/btop/" "$HOME/.config/btop/"
+cp -rv "$DOTFILES_DIR/btop/" "$HOME/.config/"
 
 # fastfetch (repo to local)
 mkdir -p "$HOME/.config/fastfetch"
-cp -rv "$DOTFILES_DIR/fastfetch/" "$HOME/.config/fastfetch/"
+cp -rv "$DOTFILES_DIR/fastfetch/" "$HOME/.config/"
 
 # starship (repo to local)
 mkdir -p "$HOME/.config"
@@ -164,7 +164,7 @@ cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
 
 # btop (local to repo)
 mkdir -p "$DOTFILES_DIR/btop"
-cp -rv "$HOME/.config/btop/" "$DOTFILES_DIR/"
+cp -rv "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/"
 
 # fastfetch (local to repo)
 mkdir -p "$DOTFILES_DIR/fastfetch"
