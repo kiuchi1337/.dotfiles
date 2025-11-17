@@ -11,17 +11,17 @@ echo "Deploying dotfiles from $DOTFILES_DIR ..."
 # .bashrc (repo to local)
 cp -v "$DOTFILES_DIR/bash/.bashrc" "$HOME/"
 
-# neovim (repo to local)
-mkdir -p "$HOME/.config/nvim"
-cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/"
-
 # btop (repo to local)
 mkdir -p "$HOME/.config/btop"
-cp -rv "$DOTFILES_DIR/btop/btop.conf" "$HOME/.config/btop/"
+cp -rv "$DOTFILES_DIR/btop/btop.conf" "$HOME/.config/"
 
 # fastfetch (repo to local)
 mkdir -p "$HOME/.config/fastfetch"
 cp -rv "$DOTFILES_DIR/fastfetch/" "$HOME/.config/"
+
+# neovim (repo to local)
+mkdir -p "$HOME/.config/nvim"
+cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/"
 
 # starship (repo to local)
 mkdir -p "$HOME/.config"

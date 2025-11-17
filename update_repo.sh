@@ -13,17 +13,17 @@ echo "Updating repo at $DOTFILES_DIR ..."
 mkdir -p "$DOTFILES_DIR/bash"
 cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/"
 
-# neovim (local to repo)
-mkdir -p "$DOTFILES_DIR/nvim"
-cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
-
 # btop (local to repo)
 mkdir -p "$DOTFILES_DIR/btop"
-cp -rv "$HOME/.config/btop/" "$DOTFILES_DIR/"
+cp -rv "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/"
 
 # fastfetch (local to repo)
 mkdir -p "$DOTFILES_DIR/fastfetch"
 cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/"
+
+# neovim (local to repo)
+mkdir -p "$DOTFILES_DIR/nvim"
+cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
 
 # starship (local to repo)
 mkdir -p "$DOTFILES_DIR/starship"

@@ -114,19 +114,19 @@ DOTFILES_DIR="$HOME/.dotfiles"
 echo "Deploying dotfiles from $DOTFILES_DIR ..."
 
 # .bashrc (repo to local)
-cp -v "$DOTFILES_DIR/bash/.bash.rc" "$HOME/"
-
-# neovim (repo to local)
-mkdir -p "$HOME/.config/nvim"
-cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/"
+cp -v "$DOTFILES_DIR/bash/.bashrc" "$HOME/"
 
 # btop (repo to local)
 mkdir -p "$HOME/.config/btop"
-cp -rv "$DOTFILES_DIR/btop/" "$HOME/.config/"
+cp -rv "$DOTFILES_DIR/btop/btop.conf" "$HOME/.config/"
 
 # fastfetch (repo to local)
 mkdir -p "$HOME/.config/fastfetch"
 cp -rv "$DOTFILES_DIR/fastfetch/" "$HOME/.config/"
+
+# neovim (repo to local)
+mkdir -p "$HOME/.config/nvim"
+cp -rv "$DOTFILES_DIR/nvim/" "$HOME/.config/"
 
 # starship (repo to local)
 mkdir -p "$HOME/.config"
@@ -158,10 +158,6 @@ echo "Updating repo at $DOTFILES_DIR ..."
 mkdir -p "$DOTFILES_DIR/bash"
 cp -v "$HOME/.bashrc" "$DOTFILES_DIR/bash/"
 
-# neovim (local to repo)
-mkdir -p "$DOTFILES_DIR/nvim"
-cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
-
 # btop (local to repo)
 mkdir -p "$DOTFILES_DIR/btop"
 cp -rv "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/"
@@ -169,6 +165,10 @@ cp -rv "$HOME/.config/btop/btop.conf" "$DOTFILES_DIR/btop/"
 # fastfetch (local to repo)
 mkdir -p "$DOTFILES_DIR/fastfetch"
 cp -rv "$HOME/.config/fastfetch/" "$DOTFILES_DIR/"
+
+# neovim (local to repo)
+mkdir -p "$DOTFILES_DIR/nvim"
+cp -rv "$HOME/.config/nvim/" "$DOTFILES_DIR/"
 
 # starship (local to repo)
 mkdir -p "$DOTFILES_DIR/starship"
