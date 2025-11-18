@@ -6,4 +6,4 @@ set number
 set relativenumber
 set list
 set listchars=tab:>-,trail:~,space:·,eol:$
-colorscheme peachpuff
+colorscheme zaibatsu
