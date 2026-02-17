@@ -17,7 +17,6 @@
     - :set ff=unix
     - :wq
 
-- The Ly Dotfile is located in /etc/ly/config.ini
 ---
 
 1. Install Git & OpenSSH
@@ -198,4 +197,5 @@ echo "Repo successfully updated and pushed!"
 
 
 ---
+
 
