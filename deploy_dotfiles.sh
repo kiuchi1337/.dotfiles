@@ -22,7 +22,7 @@ cp -v "$DOTFILES_DIR/fastfetch/yorha.txt" "$HOME/.config/fastfetch/yorha.txt"
 
 # ly (repo to local)
 mkdir -p "/etc/ly"
-cp -v "$DOTFILES_DIR/ly/config.ini" "/etc/ly"
+cp -v "$DOTFILES_DIR/ly/config.ini" "/etc/ly/config.ini"
 
 # neovim (repo to local)
 mkdir -p "$HOME/.config/nvim"
