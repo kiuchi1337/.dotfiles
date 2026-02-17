@@ -1,6 +1,5 @@
 #!/bin/bash
-# update_repo.sh
-# Copies current dotfiles back into the repo and pushes to GitHub
+# copies current dotfiles back into the repo and pushes to GitHub
 
 set -e  # exit on error
 
