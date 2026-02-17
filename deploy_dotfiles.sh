@@ -1,6 +1,5 @@
 #!/bin/bash
-# deploy_dotfiles.sh
-# Copies dotfiles from ~/.dotfiles into their respective directories
+# copies dotfiles from ~/.dotfiles into their respective directories
 
 set -e  # exit on error
 
