@@ -20,6 +20,10 @@ mkdir -p "$HOME/.config/fastfetch"
 cp -v "$DOTFILES_DIR/fastfetch/config.jsonc" "$HOME/.config/fastfetch/config.jsonc"
 cp -v "$DOTFILES_DIR/fastfetch/yorha.txt" "$HOME/.config/fastfetch/yorha.txt"
 
+# ly (repo to local)
+mkdir -p "/etc/ly"
+cp -v "$DOTFILES_DIR/ly/config.ini" "/etc/ly"
+
 # neovim (repo to local)
 mkdir -p "$HOME/.config/nvim"
 cp -v "$DOTFILES_DIR/nvim/init.vim" "$HOME/.config/nvim/init.vim"
