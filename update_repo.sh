@@ -27,7 +27,8 @@ cp -v "/etc/ly/config.ini" "$DOTFILES_DIR/ly/config.ini"
 
 # neovim (local to repo)
 mkdir -p "$DOTFILES_DIR/nvim"
-cp -v "$HOME/.config/nvim/init.vim" "$DOTFILES_DIR/nvim/init.vim"
+cp -v "$HOME/.config/nvim/init.lua" "$DOTFILES_DIR/nvim/init.lua"
+cp -v "$HOME/.config/nvim/lua/core/options.lua" "$DOTFILES_DIR/nvim/lua/core/options.lua"
 
 # starship (local to repo)
 mkdir -p "$DOTFILES_DIR/starship"
