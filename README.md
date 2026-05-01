@@ -7,7 +7,7 @@
 
 - To copy individual files, use cp -v SOURCE_FILE TARGET_FILE
 - To copy whole directories, use cp -rv SOURCE_DIR/ TARGET_DIR/
-- To copy only the conentents of a directory, use cp -rv SOURCE_DIR/* TARGET_DIR/ or cp -rv SOURCE_DIR/. TARGET_DIR/
+- To copy only the contents of a directory, use cp -rv SOURCE_DIR/* TARGET_DIR/ or cp -rv SOURCE_DIR/. TARGET_DIR/
 
 - WSL Error:
     - Open nvim
@@ -42,8 +42,14 @@ cat ~/.ssh/PUBLIC_KEY.pub
 -> To auto-load the SSH key on startup, add at the end of ~/.bashrc:
 
 ~~~bash
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/PRIVATE_KEY > /dev/null 2>&1
+# Start the SSH agent for this session
+eval "$(ssh-agent -s)" > /dev/null
+
+# Add your specific key (silencing errors if it's already there or missing)
+ssh-add ~/.ssh/PRIVATE_KEY 2>/dev/null
+
+# Automatically kill the agent when the terminal session ends
+trap "ssh-agent -k > /dev/null" EXIT
 ~~~
 
 -> eval "$(ssh-agent -s)" is needed if you're using an SSH key that requires the agent to be running.
@@ -57,6 +63,37 @@ ssh-add ~/.ssh/PRIVATE_KEY > /dev/null 2>&1
 -> > /dev/null redirects only the standard output (stdout) like any normal messages e.g. "Identity added" into the void.
 
 -> 2>&1 additionaly redirects the standard error (stderr) like warnings or errors to the same place as standard output, i.e. the void in /dev/null.
+
+---
+
+2. Testing
+
+Check if the Agent is running. The ssh-agent communicates via an environment variable. If this command returns a file path, the agent is active in your current session.
+
+~~~bash
+echo $SSH_AUTH_SOCK
+~~~
+
+- Success: You see something like /tmp/ssh-XXXXXX/agent.1234
+- Failure: The output is blank
+
+Verify the Key is loaded. Run this to see if the agent actually "holds" your github_test key.
+
+~~~bash
+ssh-add -l
+~~~
+
+- Success: You see the fingerprint and the path ~/.ssh/PRIVATE_KEY
+- Failure: It says "The agent has no identities" or "Could not open a connection."
+
+Test the connection to GitHub. You can test the actual handshake without cloning anything.
+
+~~~bash
+ssh -T git@github.com
+~~~
+
+- Success: You should see: "Hi [YourUsername]! You've successfully authenticated, but GitHub does not provide shell access."
+- Failure: git@github.com: Permission denied (publickey) or ssh: connect to host github.com port 22: Connection timed out or Error connecting to agent: No such file or directory
 
 ---
 
