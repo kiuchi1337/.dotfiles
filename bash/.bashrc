@@ -10,6 +10,9 @@ alias grep='grep --color=auto'
 alias vi=nvim
 alias vim=nvim
 alias cd=z
+alias l='lsd -l'
+alias la='lsd -la'
+alias lt='lsd --tree'
 export MANPAGER='nvim +Man!'
 export EDITOR="nvim -u NONE -n" visudo
 export VISUAL="nvim -u NONE -n" visudo
