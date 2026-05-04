@@ -17,5 +17,3 @@ opt.listchars = {
 }
 opt.spell = true
 opt.spelllang = { "en", "de" }
-
-vim.cmd.colorscheme("zaibatsu")
