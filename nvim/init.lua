@@ -13,6 +13,10 @@ vim.pack.add({
 
 local opt = vim.opt
 
+-- Leader Key (Space)
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 -- UI
 opt.termguicolors = true
 opt.cursorline = true
@@ -41,6 +45,9 @@ opt.undofile = true
 -- Startup message
 opt.shortmess:append("I")
 
+-- Disable mouse
+opt.mouse = ""
+
 -- Show whitespace
 opt.list = true
 opt.listchars = {
@@ -57,12 +64,50 @@ opt.listchars = {
 --    nbsp = "_",
 --}
 
--- Spell checking
+----------------------------------------------------
+-- Spellchecking Logic & Keymaps
+----------------------------------------------------
 opt.spell = true
-opt.spelllang = { "en", "de" }
+opt.spelllang = { "en" }
 
--- Disable mouse
-opt.mouse = ""
+-- Cycle order: EN -> DE -> DE+EN
+local spell_languages = {
+    { "en" },
+    { "de" },
+    { "de", "en" },
+}
+local current_lang_index = 1
+
+-- Function to get the status string for the statusline
+local function get_spell_status()
+    if not vim.wo.spell then
+        return "SPELL: OFF"
+    end
+    local langs = table.concat(vim.opt.spelllang:get(), ","):upper()
+    return "SPELL: " .. langs
+end
+
+-- 1. Toggle Spellcheck (On / Off)
+vim.keymap.set("n", "<leader>st", function()
+    vim.wo.spell = not vim.wo.spell
+    print("Spellcheck: " .. (vim.wo.spell and "ACTIVATED (" .. table.concat(vim.opt.spelllang:get(), ",") .. ")" or "DEACTIVATED"))
+    vim.cmd("redrawstatus")
+end, { desc = "Toggle Spellcheck (On/Off)" })
+
+-- 2. Cyclic language switch (EN -> DE -> DE+EN)
+vim.keymap.set("n", "<leader>sl", function()
+    current_lang_index = (current_lang_index % #spell_languages) + 1
+    vim.opt.spelllang = spell_languages[current_lang_index]
+    
+    -- Enable spellcheck automatically if it was disabled when switching
+    if not vim.wo.spell then
+        vim.wo.spell = true
+    end
+
+    local langs_str = table.concat(vim.opt.spelllang:get(), ","):upper()
+    print("Spellcheck language changed to: " .. langs_str)
+    vim.cmd("redrawstatus")
+end, { desc = "Switch Spellcheck Language (EN -> DE -> DE+EN)" })
 
 --------------------------------------------------
 -- Colorscheme
@@ -82,6 +127,35 @@ require("mini.files").setup()
 require("mini.pairs").setup()
 require("mini.surround").setup()
 require("mini.statusline").setup()
+
+-- mini.statusline with custom spellcheck status section
+local statusline = require("mini.statusline")
+statusline.setup({
+    content = {
+        active = function()
+            local mode, mode_hl = statusline.section_mode({ trunc_width = 120 })
+            local git           = statusline.section_git({ trunc_width = 75 })
+            local diagnostics   = statusline.section_diagnostics({ trunc_width = 75 })
+            local filename      = statusline.section_filename({ trunc_width = 140 })
+            local fileinfo      = statusline.section_fileinfo({ trunc_width = 120 })
+            local location      = statusline.section_location({ trunc_width = 75 })
+            
+            -- Custom spellcheck section
+            local spell_info    = get_spell_status()
+
+            return statusline.combine_groups({
+                { hl = mode_hl,                  strings = { mode } },
+                { hl = "MiniStatuslineDevinfo",  strings = { git, diagnostics } },
+                "%<", -- Truncate-Point
+                { hl = "MiniStatuslineFilename", strings = { filename } },
+                "%=", -- Right Alignment Marker
+                { hl = "MiniStatuslineModeOther", strings = { spell_info } },
+                { hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+                { hl = mode_hl,                  strings = { location } },
+            })
+        end,
+    },
+})
 
 --------------------------------------------------
 -- Keymaps
