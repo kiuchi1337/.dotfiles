@@ -67,6 +67,7 @@ opt.listchars = {
 ----------------------------------------------------
 -- Spellchecking Logic & Keymaps
 ----------------------------------------------------
+
 opt.spell = true
 opt.spelllang = { "en" }
 
@@ -123,10 +124,11 @@ vim.cmd.colorscheme("kanagawa-wave")
 
 require("mini.ai").setup()
 require("mini.comment").setup()
+require("mini.completion").setup()
 require("mini.files").setup()
 require("mini.pairs").setup()
-require("mini.surround").setup()
 require("mini.statusline").setup()
+require("mini.surround").setup()
 
 -- mini.statusline with custom spellcheck status section
 local statusline = require("mini.statusline")
@@ -164,3 +166,13 @@ statusline.setup({
 vim.keymap.set("n", "-", function()
     MiniFiles.open()
 end, { desc = "Open MiniFiles" })
+
+-- Tab completion keymaps in Insert Mode
+local imap_expr = function(lhs, rhs)
+    vim.keymap.set("i", lhs, rhs, { expr = true, replace_keycodes = false })
+end
+
+-- Tab selects next item if menu is open, otherwise inserts literal Tab
+imap_expr("<Tab>", [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
+-- Shift-Tab selects previous item
+imap_expr("<S-Tab>", [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
