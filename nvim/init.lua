@@ -11,11 +11,11 @@ vim.pack.add({
 -- Options
 --------------------------------------------------
 
-local opt = vim.opt
-
 -- Leader Key (Space)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
+local opt = vim.opt
 
 -- UI
 opt.termguicolors = true
@@ -50,199 +50,141 @@ opt.mouse = ""
 
 -- Show whitespace
 opt.list = true
-opt.listchars = {
-    tab = "→ ",
-    space = "·",
-    trail = "•",
-    nbsp = "␣",
-}
+opt.listchars = { tab = "→ ", space = "·", trail = "•", nbsp = "␣" }
+-- opt.listchars = { tab = ">-", space = "·", trail = "~", nbsp = "_" }
 
---opt.listchars = {
---    tab = ">-",
---    space = "·",
---    trail = "~",
---    nbsp = "_",
---}
+-- Theme
+vim.cmd.colorscheme("kanagawa-wave")
+-- vim.cmd.colorscheme("kanagawa-dragon")
+-- vim.cmd.colorscheme("habamax")
 
-----------------------------------------------------
--- Spellchecking Logic & Keymaps
-----------------------------------------------------
+--------------------------------------------------
+-- Spellcheck
+--------------------------------------------------
 
 opt.spell = true
 opt.spelllang = { "en" }
 
--- Cycle order: EN -> DE -> DE+EN
-local spell_languages = {
-    { "en" },
-    { "de" },
-    { "de", "en" },
-}
-local current_lang_index = 1
+local map = vim.keymap.set
+local spell_languages = { { "en" }, { "de" }, { "de", "en" } }
+local spell_index = 1
 
--- Function to get the status string for the statusline
-local function get_spell_status()
-    if not vim.wo.spell then
-        return "SPELL: OFF"
-    end
-    local langs = table.concat(vim.opt.spelllang:get(), ","):upper()
-    return "SPELL: " .. langs
+local function spell_status()
+    return vim.wo.spell
+        and "SPELL: " .. table.concat(opt.spelllang:get(), ","):upper()
+        or "SPELL: OFF"
 end
 
--- 1. Toggle Spellcheck (On / Off)
-vim.keymap.set("n", "<leader>st", function()
+map("n", "<leader>st", function()
     vim.wo.spell = not vim.wo.spell
-    print("Spellcheck: " .. (vim.wo.spell and "ACTIVATED (" .. table.concat(vim.opt.spelllang:get(), ",") .. ")" or "DEACTIVATED"))
-    vim.cmd("redrawstatus")
+    local state = vim.wo.spell and "ACTIVATED (" .. table.concat(opt.spelllang:get(), ",") .. ")" or "DEACTIVATED"
+    print("Spellcheck: " .. state)
+    vim.cmd.redrawstatus()
 end, { desc = "Toggle Spellcheck (On/Off)" })
 
--- 2. Cyclic language switch (EN -> DE -> DE+EN)
-vim.keymap.set("n", "<leader>sl", function()
-    current_lang_index = (current_lang_index % #spell_languages) + 1
-    vim.opt.spelllang = spell_languages[current_lang_index]
-    
-    -- Enable spellcheck automatically if it was disabled when switching
-    if not vim.wo.spell then
-        vim.wo.spell = true
-    end
-
-    local langs_str = table.concat(vim.opt.spelllang:get(), ","):upper()
-    print("Spellcheck language changed to: " .. langs_str)
-    vim.cmd("redrawstatus")
+map("n", "<leader>sl", function()
+    spell_index = spell_index % #spell_languages + 1
+    opt.spelllang = spell_languages[spell_index]
+    vim.wo.spell = true
+    print("Spellcheck language changed to: " .. table.concat(opt.spelllang:get(), ","):upper())
+    vim.cmd.redrawstatus()
 end, { desc = "Switch Spellcheck Language (EN -> DE -> DE+EN)" })
 
---------------------------------------------------
--- Colorscheme
---------------------------------------------------
-
-vim.cmd.colorscheme("kanagawa-wave")
---vim.cmd.colorscheme("kanagawa-dragon")
---vim.cmd.colorscheme("habamax")
+for _, module in ipairs({ "ai", "comment", "files", "git", "pairs", "pick", "surround" }) do
+    require("mini." .. module).setup()
+end
 
 --------------------------------------------------
--- mini.nvim
+-- MINI Setup
 --------------------------------------------------
 
--- Loads defaults unless stated otherwise
--- mini.completion and mini.statusline are commented out because of specific settings below 
-require("mini.ai").setup()
-require("mini.comment").setup()
---require("mini.completion").setup()
-require("mini.files").setup()
-require("mini.pairs").setup()
-require("mini.pick").setup()
---require("mini.statusline").setup()
-require("mini.surround").setup()
+require("mini.diff").setup({
+    view = { style = "sign", signs = { add = "▒", change = "▒", delete = "▒" } },
+})
 
--- mini.statusline with custom spellcheck status section
 local statusline = require("mini.statusline")
 statusline.setup({
     content = {
         active = function()
             local mode, mode_hl = statusline.section_mode({ trunc_width = 120 })
-            local git           = statusline.section_git({ trunc_width = 75 })
-            local diagnostics   = statusline.section_diagnostics({ trunc_width = 75 })
-            local filename      = statusline.section_filename({ trunc_width = 140 })
-            local fileinfo      = statusline.section_fileinfo({ trunc_width = 120 })
-            local location      = statusline.section_location({ trunc_width = 75 })
-            
-            -- Custom spellcheck section
-            local spell_info    = get_spell_status()
-
             return statusline.combine_groups({
-                { hl = mode_hl,                  strings = { mode } },
-                { hl = "MiniStatuslineDevinfo",  strings = { git, diagnostics } },
-                "%<", -- Truncate-Point
-                { hl = "MiniStatuslineFilename", strings = { filename } },
-                "%=", -- Right Alignment Marker
-                { hl = "MiniStatuslineModeOther", strings = { spell_info } },
-                { hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
-                { hl = mode_hl,                  strings = { location } },
+                { hl = mode_hl, strings = { mode } },
+                {
+                    hl = "MiniStatuslineDevinfo",
+                    strings = {
+                        statusline.section_git({ trunc_width = 75 }),
+                        statusline.section_diagnostics({ trunc_width = 75 }),
+                    },
+                },
+                "%<",
+                { hl = "MiniStatuslineFilename", strings = { statusline.section_filename({ trunc_width = 140 }) } },
+                "%=",
+                { hl = "MiniStatuslineModeOther", strings = { spell_status() } },
+                { hl = "MiniStatuslineFileinfo", strings = { statusline.section_fileinfo({ trunc_width = 120 }) } },
+                { hl = mode_hl, strings = { statusline.section_location({ trunc_width = 75 }) } },
             })
         end,
     },
 })
 
-----------------------------------------------------
--- mini.completion Configuration (Strict LSP-only)
-----------------------------------------------------
-
 require("mini.completion").setup({
-    -- Restrict sources strictly to LSP and omni, disabling noisy buffer word matching
     sources = {
-        { name = 'lsp',  freq = 1 },
-        { name = 'omni', freq = 2 },
-        { name = 'keyword', freq = 3 },
+        { name = "lsp", freq = 1 },
+        { name = "omni", freq = 2 },
+        { name = "keyword", freq = 3 },
     },
-    window = {
-        info = { border = "solid" },
-        signature = { border = "solid" },
-    },
-    fallback_action = function()
-        return ""
-    end,
+    window = { info = { border = "solid" }, signature = { border = "solid" } },
+    fallback_action = function() return "" end,
 })
-
-----------------------------------------------------
--- Python LSP & Ruff Configuration (Pixi-Aware & Robust)
-----------------------------------------------------
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "python",
     callback = function(args)
-        -- Safe project root directory detection
-        local buf_name = vim.api.nvim_buf_get_name(args.buf)
-        local search_path = buf_name ~= "" and buf_name or nil
-        local found = vim.fs.find({ "pixi.toml", "pyproject.toml", "setup.py", ".git" }, { upward = true, path = search_path })
-        local root_dir = found[1] and vim.fs.dirname(found[1]) or vim.fn.getcwd()
+        local name = vim.api.nvim_buf_get_name(args.buf)
+        local found = vim.fs.find(
+            { "pixi.toml", "pyproject.toml", "setup.py", ".git" },
+            { upward = true, path = name ~= "" and name or nil }
+        )
+        local root = found[1] and vim.fs.dirname(found[1]) or vim.fn.getcwd()
+        local bin = root .. "/.pixi/envs/default/bin"
+        local executables = {
+            pyright = { bin .. "/pyright-langserver", "pyright-langserver" },
+            ruff = { bin .. "/ruff", "ruff" },
+            python = { bin .. "/python", "python" },
+        }
 
-        -- Define local Pixi binary and python paths
-        local pixi_bin = root_dir .. "/.pixi/envs/default/bin"
-        local pyright_path = pixi_bin .. "/pyright-langserver"
-        local ruff_path = pixi_bin .. "/ruff"
-        local python_path = pixi_bin .. "/python"
+        for key, paths in pairs(executables) do
+            if vim.fn.executable(paths[1]) == 1 then
+                executables[key] = paths[1]
+            else
+                executables[key] = paths[2]
+            end
+        end
 
-        -- Fallback to system executables if local Pixi env doesn't exist
-        local pyright_cmd = vim.fn.executable(pyright_path) == 1 and pyright_path or "pyright-langserver"
-        local ruff_cmd = vim.fn.executable(ruff_path) == 1 and ruff_path or "ruff"
-        local python_cmd = vim.fn.executable(python_path) == 1 and python_path or "python"
-
-        -- Check active clients to prevent duplicate starts
-        local active_clients = vim.lsp.get_clients({ bufnr = args.buf })
-        local function has_client(name)
-            for _, client in ipairs(active_clients) do
+        local clients = vim.lsp.get_clients({ bufnr = args.buf })
+        local function active(name)
+            for _, client in ipairs(clients) do
                 if client.name == name then return true end
             end
-            return false
         end
 
-        -- 1. Start Pyright
-        if not has_client("pyright") and vim.fn.executable(pyright_cmd) == 1 then
+        if not active("pyright") and vim.fn.executable(executables.pyright) == 1 then
             vim.lsp.start({
                 name = "pyright",
-                cmd = { pyright_cmd, "--stdio" },
-                root_dir = root_dir,
-                settings = {
-                    python = {
-                        pythonPath = python_cmd,
-                    },
-                },
+                cmd = { executables.pyright, "--stdio" },
+                root_dir = root,
+                settings = { python = { pythonPath = executables.python } },
             }, { bufnr = args.buf })
         end
-
-        -- 2. Start Ruff
-        if not has_client("ruff") and vim.fn.executable(ruff_cmd) == 1 then
+        if not active("ruff") and vim.fn.executable(executables.ruff) == 1 then
             vim.lsp.start({
                 name = "ruff",
-                cmd = { ruff_cmd, "server" },
-                root_dir = root_dir,
+                cmd = { executables.ruff, "server" },
+                root_dir = root,
             }, { bufnr = args.buf })
         end
     end,
 })
-
-----------------------------------------------------
--- Custom LspInfo Command (for Native LSP)
-----------------------------------------------------
 
 vim.api.nvim_create_user_command("LspInfo", function()
     local clients = vim.lsp.get_clients({ bufnr = 0 })
@@ -250,45 +192,68 @@ vim.api.nvim_create_user_command("LspInfo", function()
         print("No active LSP clients attached to current buffer.")
         return
     end
-
     print("--- Active LSP Clients ---")
     for _, client in ipairs(clients) do
         print("Name: " .. client.name .. " (ID: " .. client.id .. ")")
         print("Root Dir: " .. (client.config.root_dir or "N/A"))
-        if client.config.settings and client.config.settings.python then
-            print("Python Path: " .. (client.config.settings.python.pythonPath or "N/A"))
-        end
+        local python = client.config.settings and client.config.settings.python
+        if python then print("Python Path: " .. (python.pythonPath or "N/A")) end
         print("--------------------------")
     end
 end, { desc = "Show active LSP client info for current buffer" })
 
---------------------------------------------------
--- Keymaps
---------------------------------------------------
+map("n", "-", function() MiniFiles.open() end, { desc = "Open MiniFiles" })
+map("i", "<Tab>", [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true, replace_keycodes = false })
+map("i", "<S-Tab>", [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true, replace_keycodes = false })
 
--- Open file explorer
-vim.keymap.set("n", "-", function()
-    MiniFiles.open()
-end, { desc = "Open MiniFiles" })
+local pick = {
+    ["<leader>ff"] = { MiniPick.builtin.files, "Pick files" },
+    ["<leader>fg"] = { MiniPick.builtin.grep_live, "Live grep (search in files)" },
+    ["<leader>fb"] = { MiniPick.builtin.buffers, "Pick buffers" },
+}
+for key, value in pairs(pick) do map("n", key, value[1], { desc = value[2] }) end
 
--- Tab completion keymaps in Insert Mode
-local imap_expr = function(lhs, rhs)
-    vim.keymap.set("i", lhs, rhs, { expr = true, replace_keycodes = false })
+for key, value in pairs({
+    gd = { vim.lsp.buf.definition, "LSP: Go to definition" },
+    K = { vim.lsp.buf.hover, "LSP: Hover documentation" },
+    ["<leader>rn"] = { vim.lsp.buf.rename, "LSP: Rename symbol" },
+    ["<leader>ca"] = { vim.lsp.buf.code_action, "LSP: Code action" },
+    ["<leader>f"] = { function() vim.lsp.buf.format({ async = true }) end, "LSP: Format file" },
+}) do
+    map("n", key, value[1], { desc = value[2] })
 end
 
--- Tab selects next item if menu is open, otherwise inserts literal Tab
-imap_expr("<Tab>", [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
--- Shift-Tab selects previous item
-imap_expr("<S-Tab>", [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
+map("n", "]h", function() MiniDiff.goto_hunk("next") end, { desc = "Next hunk" })
+map("n", "[h", function() MiniDiff.goto_hunk("prev") end, { desc = "Previous hunk" })
+for _, mode in ipairs({ "n", "x" }) do
+    map(mode, "<leader>hs", 'v:lua.MiniDiff.operator("apply")', { expr = mode == "n", desc = "Stage hunk" })
+    map(mode, "<leader>hr", 'v:lua.MiniDiff.operator("reset")', { expr = mode == "n", desc = "Reset hunk" })
+end
+map("n", "<leader>gc", function() MiniGit.show_at_cursor() end, { desc = "Git details at cursor" })
 
--- mini.pick Keymaps
-vim.keymap.set("n", "<leader>ff", function() MiniPick.builtin.files() end, { desc = "Pick files" })
-vim.keymap.set("n", "<leader>fg", function() MiniPick.builtin.grep_live() end, { desc = "Live grep (search in files)" })
-vim.keymap.set("n", "<leader>fb", function() MiniPick.builtin.buffers() end, { desc = "Pick buffers" })
+map("n", "<leader>fr", function()
+    local registers = { '"', "-", ":", ".", "%", "#", "/", "=", "?", "_" }
+    for i = 0, 9 do registers[#registers + 1] = tostring(i) end
+    for i = 0, 25 do registers[#registers + 1] = string.char(string.byte("a") + i) end
 
--- LSP Keymaps
-vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end, { desc = "LSP: Go to definition" })
-vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end, { desc = "LSP: Hover documentation" })
-vim.keymap.set('n', '<leader>rn', function() vim.lsp.buf.rename() end, { desc = "LSP: Rename symbol" })
-vim.keymap.set('n', '<leader>ca', function() vim.lsp.buf.code_action() end, { desc = "LSP: Code action" })
-vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format({ async = true }) end, { desc = "LSP: Format file" })
+    local items = {}
+    for _, reg in ipairs(registers) do
+        local value = vim.fn.getreg(reg)
+        if value and value ~= "" then
+            local display = value:gsub("\n", "\\n")
+            if #display > 50 then display = display:sub(1, 47) .. "..." end
+            items[#items + 1] = { text = string.format(":%s: %s", reg, display), value = value }
+        end
+    end
+    MiniPick.start({
+        source = {
+            name = "Registers",
+            items = items,
+            choose = function(item)
+                if item then
+                    vim.schedule(function() vim.api.nvim_put(vim.split(item.value, "\n"), "c", true, true) end)
+                end
+            end,
+        },
+    })
+end, { desc = "Pick registers" })
