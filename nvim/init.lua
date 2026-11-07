@@ -186,6 +186,67 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+local function typst_project()
+    local name = vim.api.nvim_buf_get_name(0)
+    local found = vim.fs.find({ "typst.toml", "pixi.toml", ".git" }, {
+        upward = true,
+        path = name ~= "" and name or nil,
+    })
+    local root = found[1] and vim.fs.dirname(found[1]) or vim.fn.getcwd()
+    local local_tinymist = root .. "/.pixi/envs/default/bin/tinymist"
+    local tinymist = vim.fn.executable(local_tinymist) == 1 and local_tinymist or "tinymist"
+
+    return root, vim.fn.executable(tinymist) == 1 and tinymist or nil
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "typst",
+    callback = function(args)
+        local root, tinymist = typst_project()
+        if not tinymist then return end
+
+        for _, client in ipairs(vim.lsp.get_clients({ bufnr = args.buf })) do
+            if client.name == "tinymist" then return end
+        end
+
+        vim.lsp.start({
+            name = "tinymist",
+            cmd = { tinymist, "lsp" },
+            root_dir = root,
+            settings = {
+                formatterMode = "typstyle",
+                formatterIndentSize = 4,
+                formatterProseWrap = "sentence",
+            },
+        }, { bufnr = args.buf })
+    end,
+})
+
+map("n", "<leader>tc", function()
+    if vim.bo.filetype ~= "typst" then
+        vim.notify("Current buffer is not a Typst file", vim.log.levels.WARN)
+        return
+    end
+
+    local root, tinymist = typst_project()
+    if not tinymist then
+        vim.notify("Tinymist not found in Pixi environment or PATH", vim.log.levels.ERROR)
+        return
+    end
+
+    if vim.bo.modified then vim.cmd.write() end
+    local file = vim.api.nvim_buf_get_name(0)
+    vim.system({ tinymist, "compile", file }, { cwd = root }, function(result)
+        vim.schedule(function()
+            if result.code == 0 then
+                vim.notify("Typst compiled successfully", vim.log.levels.INFO)
+            else
+                vim.notify(result.stderr ~= "" and result.stderr or "Typst compilation failed", vim.log.levels.ERROR)
+            end
+        end)
+    end)
+end, { desc = "Typst: Compile file" })
+
 vim.api.nvim_create_user_command("LspInfo", function()
     local clients = vim.lsp.get_clients({ bufnr = 0 })
     if #clients == 0 then
@@ -218,7 +279,20 @@ for key, value in pairs({
     K = { vim.lsp.buf.hover, "LSP: Hover documentation" },
     ["<leader>rn"] = { vim.lsp.buf.rename, "LSP: Rename symbol" },
     ["<leader>ca"] = { vim.lsp.buf.code_action, "LSP: Code action" },
-    ["<leader>f"] = { function() vim.lsp.buf.format({ async = true }) end, "LSP: Format file" },
+    ["<leader>f"] = {
+        function()
+            local clients = vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" })
+            if #clients == 0 then
+                vim.notify("No LSP client provides document formatting", vim.log.levels.WARN)
+                return
+            end
+            vim.lsp.buf.format({
+                async = true,
+                filter = function(client) return client.name == "tinymist" or client.name == "ruff" end,
+            })
+        end,
+        "LSP: Format file",
+    },
 }) do
     map("n", key, value[1], { desc = value[2] })
 end
