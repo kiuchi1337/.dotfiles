@@ -7,19 +7,20 @@
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-alias vi=nvim
-alias vim=nvim
-alias cd=z
+if command -v nvim >/dev/null 2>&1; then
+  alias vi='nvim'
+  alias vim='nvim'
+  export EDITOR='nvim'
+  export VISUAL='nvim'
+fi
 alias l='lsd -l'
 alias la='lsd -la'
 alias lt='lsd --tree'
 export MANPAGER='nvim +Man!'
-export EDITOR="nvim -u NONE -n" visudo
-export VISUAL="nvim -u NONE -n" visudo
 PS1='[\u@\h \W]\$ '
 eval "$(starship init bash)"
-eval "$(zoxide init --cmd cd bash)"
 eval "$(fzf --bash)"
+eval "$(zoxide init --cmd cd bash)"
 . "$HOME/.cargo/env"
 # Start the SSH agent for this session
 eval "$(ssh-agent -s)" > /dev/null
