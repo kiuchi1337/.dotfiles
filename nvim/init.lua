@@ -94,6 +94,76 @@ for _, module in ipairs({ "ai", "comment", "files", "git", "pairs", "pick", "sur
     require("mini." .. module).setup()
 end
 
+require("mini.clue").setup({
+    triggers = {
+        { mode = "n", keys = "<Leader>" },
+        { mode = "x", keys = "<Leader>" },
+        { mode = "n", keys = "<LocalLeader>" },
+        { mode = "x", keys = "<LocalLeader>" },
+        { mode = "n", keys = "g" },
+        { mode = "x", keys = "g" },
+        { mode = "n", keys = "z" },
+        { mode = "x", keys = "z" },
+        { mode = "n", keys = "[" },
+        { mode = "n", keys = "]" },
+        { mode = "n", keys = '"' },
+        { mode = "x", keys = '"' },
+        { mode = "n", keys = "<C-w>" },
+    },
+    clues = {
+        require("mini.clue").gen_clues.builtin_completion(),
+        require("mini.clue").gen_clues.g(),
+        require("mini.clue").gen_clues.marks(),
+        require("mini.clue").gen_clues.registers(),
+        require("mini.clue").gen_clues.windows(),
+        require("mini.clue").gen_clues.z(),
+    },
+    window = {
+        delay = 300,
+        config = {
+            width = "auto",
+        },
+    },
+})
+
+local animate = require("mini.animate")
+vim.api.nvim_set_hl(0, "MiniAnimateCursor", {
+    fg = "#000000",
+    bg = "#00FF00",
+})
+
+animate.setup({
+    cursor = {
+        enable = true,
+        timing = animate.gen_timing.linear({ duration = 200, unit = "total" }),
+        path = animate.gen_path.walls({ width = 10 }),
+    },
+    scroll = {
+        enable = true,
+        timing = animate.gen_timing.linear({ duration = 150, unit = "total" }),
+        subscroll = animate.gen_subscroll.equal({ max_output_steps = 120 }),
+    },
+    resize = {
+        enable = true,
+        timing = animate.gen_timing.linear({ duration = 150, unit = "total" }),
+    },
+    open = {
+        enable = true,
+        timing = animate.gen_timing.linear({ duration = 300, unit = "total" }),
+    },
+    close = {
+        enable = true,
+        timing = animate.gen_timing.linear({ duration = 300, unit = "total" }),
+    },
+})
+
+local animate_enabled = true
+map("n", "<leader>ma", function()
+    animate_enabled = not animate_enabled
+    vim.g.minianimate_disable = not animate_enabled
+    vim.notify("mini.animate: " .. (animate_enabled and "enabled" or "disabled"), vim.log.levels.INFO)
+end, { desc = "Toggle mini.animate" })
+
 --------------------------------------------------
 -- MINI Setup
 --------------------------------------------------
